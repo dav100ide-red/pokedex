@@ -36,5 +36,8 @@ and buildable: `npx ng build` must pass with zero errors.
 ## PrimeNG
 
 Before writing any PrimeNG code, use the `primeng-21` skill: it has the v21 setup, theming, pitfalls and
-a per-component reference with import paths and examples. For Angular questions, the Angular CLI MCP
-server configured in `.mcp.json` provides `get_best_practices`, `search_documentation` and `find_examples`.
+a per-component reference with import paths and examples. For anything the skill does not cover, the
+official PrimeNG MCP server configured in `.mcp.json` (v21 docs) offers `search_all`, `get_component_import`,
+`get_component_sections`, `get_example`, `validate_props` and `suggest_component`. For Angular questions,
+the Angular CLI MCP server in the same file provides `get_best_practices`, `search_documentation` and
+`find_examples`.
