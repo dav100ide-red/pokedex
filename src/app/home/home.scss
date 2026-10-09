@@ -1,0 +1,117 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+}
+
+.theme-toggle,
+.field-inline {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.theme-icon {
+  font-size: 0.625rem;
+}
+
+.table-caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.type-filter {
+  width: 18rem;
+  max-width: 100%;
+}
+
+.sortable-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.name {
+  font-weight: 600;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.favorite {
+  color: var(--p-text-muted-color);
+
+  &.pi-star-fill {
+    color: var(--p-yellow-500);
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.pokemon-form,
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.pokemon-form {
+  gap: 1.25rem;
+}
+
+.field {
+  gap: 0.5rem;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: 1.25rem;
+}
+
+label,
+.field-label {
+  font-weight: 600;
+}
+
+.new-move {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.image-field {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.image-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}

@@ -1,3 +1,288 @@
-@for (pokemon of pokemons(); track pokemon.id) {
-  <div>{{ pokemon | json }}</div>
-}
+<p-toolbar>
+  <ng-template #start>
+    <div class="brand">
+      <p-image [src]="placeholderImageUrl" alt="" width="40" height="40" />
+      <h1>Pokédex</h1>
+    </div>
+  </ng-template>
+  <ng-template #end>
+    <div class="theme-toggle">
+      <label for="dark-mode">Dark mode</label>
+      <p-toggleswitch
+        inputId="dark-mode"
+        [ngModel]="theme.darkMode()"
+        (ngModelChange)="theme.setDarkMode($event)"
+      >
+        <ng-template #handle let-checked="checked">
+          <i class="pi theme-icon" [class.pi-moon]="checked" [class.pi-sun]="!checked"></i>
+        </ng-template>
+      </p-toggleswitch>
+    </div>
+  </ng-template>
+</p-toolbar>
+
+<p-table
+  #dt
+  [value]="pokemons()"
+  dataKey="id"
+  [paginator]="true"
+  [rows]="10"
+  [filterDelay]="0"
+  [showCurrentPageReport]="true"
+  currentPageReportTemplate="{first}–{last} of {totalRecords} Pokémon"
+  [tableStyle]="{ 'min-width': '60rem' }"
+>
+  <ng-template #caption>
+    <div class="table-caption">
+      <p-button label="New Pokémon" icon="pi pi-plus" (onClick)="openDialog()" />
+      <p-multiselect
+        class="type-filter"
+        [options]="types"
+        [(ngModel)]="typeFilter"
+        (ngModelChange)="dt.filter($event, 'types', hasAnyType)"
+        placeholder="Filter by type"
+        ariaLabel="Filter by type"
+        [showClear]="true"
+        [maxSelectedLabels]="3"
+        selectedItemsLabel="{0} types selected"
+      />
+    </div>
+  </ng-template>
+
+  <ng-template #header>
+    <tr>
+      <th>Sprite</th>
+      <th pSortableColumn="name">
+        <span class="sortable-header">Name <p-sortIcon field="name" /></span>
+      </th>
+      <th>Types</th>
+      <th pSortableColumn="level">
+        <span class="sortable-header">Level <p-sortIcon field="level" /></span>
+      </th>
+      <th pSortableColumn="capturedAt">
+        <span class="sortable-header">Capture date <p-sortIcon field="capturedAt" /></span>
+      </th>
+      <th>Favorite</th>
+      <th>Actions</th>
+    </tr>
+  </ng-template>
+
+  <ng-template #body let-pokemon>
+    <tr>
+      <td>
+        <p-image
+          [src]="pokemon.imageUrl || placeholderImageUrl"
+          [alt]="pokemon.name"
+          width="64"
+          height="64"
+          [imageStyle]="{ objectFit: 'contain' }"
+        />
+      </td>
+      <td class="name">{{ pokemon.name }}</td>
+      <td>
+        <div class="tags">
+          @for (type of pokemon.types; track type) {
+            <p-tag [value]="type" severity="secondary" />
+          }
+        </div>
+      </td>
+      <td>{{ pokemon.level }}</td>
+      <td>{{ pokemon.capturedAt | date: 'mediumDate' }}</td>
+      <td>
+        <i
+          class="pi favorite"
+          [class.pi-star-fill]="pokemon.favorite"
+          [class.pi-star]="!pokemon.favorite"
+          role="img"
+          [attr.aria-label]="pokemon.favorite ? 'Favorite' : 'Not favorite'"
+        ></i>
+      </td>
+      <td>
+        <div class="actions">
+          <p-button
+            icon="pi pi-pencil"
+            severity="secondary"
+            [rounded]="true"
+            [text]="true"
+            ariaLabel="Edit {{ pokemon.name }}"
+            pTooltip="Edit"
+            tooltipPosition="top"
+            (onClick)="openDialog(pokemon)"
+          />
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            [rounded]="true"
+            [text]="true"
+            ariaLabel="Delete {{ pokemon.name }}"
+            pTooltip="Delete"
+            tooltipPosition="top"
+            (onClick)="confirmDelete(pokemon)"
+          />
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template #emptymessage>
+    <tr>
+      <td colspan="7">No Pokémon found.</td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-dialog
+  [header]="dialogHeader()"
+  [(visible)]="dialogVisible"
+  [modal]="true"
+  [style]="{ width: '36rem' }"
+  [breakpoints]="{ '640px': '95vw' }"
+>
+  <ng-template #content>
+    <form class="pokemon-form" [formGroup]="form">
+      <div class="field">
+        <label for="name">Name</label>
+        <input
+          pInputText
+          id="name"
+          formControlName="name"
+          autocomplete="off"
+          fluid
+          [invalid]="isInvalid(form.controls.name)"
+        />
+        @if (isInvalid(form.controls.name)) {
+          <p-message severity="error" size="small" variant="simple">Name is required.</p-message>
+        }
+      </div>
+
+      <div class="field">
+        <label for="types">Types</label>
+        <p-multiselect
+          inputId="types"
+          formControlName="types"
+          [options]="types"
+          placeholder="Select types"
+          display="chip"
+          fluid
+          [invalid]="isInvalid(form.controls.types)"
+        />
+        @if (isInvalid(form.controls.types)) {
+          <p-message severity="error" size="small" variant="simple">
+            Select at least one type.
+          </p-message>
+        }
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="level">Level</label>
+          <p-inputnumber
+            inputId="level"
+            formControlName="level"
+            [min]="1"
+            [max]="100"
+            [showButtons]="true"
+            fluid
+            [invalid]="isInvalid(form.controls.level)"
+          />
+          @if (isInvalid(form.controls.level)) {
+            <p-message severity="error" size="small" variant="simple">
+              Enter a level between 1 and 100.
+            </p-message>
+          }
+        </div>
+
+        <div class="field">
+          <label for="captured-at">Capture date</label>
+          <p-datepicker
+            inputId="captured-at"
+            formControlName="capturedAt"
+            dateFormat="M d, yy"
+            [maxDate]="today"
+            [showIcon]="true"
+            fluid
+            [invalid]="isInvalid(form.controls.capturedAt)"
+          />
+          @if (isInvalid(form.controls.capturedAt)) {
+            <p-message severity="error" size="small" variant="simple">
+              Capture date is required.
+            </p-message>
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="moves">Moves</label>
+        <p-autocomplete
+          inputId="moves"
+          formControlName="moves"
+          [multiple]="true"
+          [dropdown]="true"
+          [suggestions]="moveSuggestions()"
+          (completeMethod)="searchMoves($event)"
+          placeholder="Search or add a move"
+          fluid
+        >
+          <ng-template #item let-move>
+            @if (isNewMove(move)) {
+              <span class="new-move"><i class="pi pi-plus"></i> Add "{{ move }}"</span>
+            } @else {
+              {{ move }}
+            }
+          </ng-template>
+        </p-autocomplete>
+      </div>
+
+      <div class="field-inline">
+        <p-toggleswitch inputId="favorite" formControlName="favorite" />
+        <label for="favorite">Favorite</label>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Image</span>
+        <div class="image-field">
+          <p-image
+            [src]="imageUrl() || placeholderImageUrl"
+            alt="Pokémon image preview"
+            width="96"
+            height="96"
+            [imageStyle]="{ objectFit: 'contain' }"
+          />
+          <div class="image-actions">
+            <p-fileupload
+              mode="basic"
+              accept="image/*"
+              [auto]="true"
+              [customUpload]="true"
+              chooseIcon="pi pi-upload"
+              [chooseLabel]="imageUrl() ? 'Replace image' : 'Upload image'"
+              (uploadHandler)="onImageUpload($event)"
+            />
+            @if (imageUrl()) {
+              <p-button
+                label="Remove image"
+                icon="pi pi-times"
+                severity="secondary"
+                [text]="true"
+                (onClick)="imageUrl.set('')"
+              />
+            }
+          </div>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #footer>
+    <p-button
+      label="Cancel"
+      severity="secondary"
+      [text]="true"
+      (onClick)="dialogVisible.set(false)"
+    />
+    <p-button label="Save" icon="pi pi-check" (onClick)="save()" />
+  </ng-template>
+</p-dialog>
+
+<p-toast />
+<p-confirmdialog />
