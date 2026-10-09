@@ -1,0 +1,44 @@
+.caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.type-filter {
+  width: min(100%, 18rem);
+}
+
+.name {
+  font-weight: 600;
+}
+
+.types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.favorite {
+  color: var(--app-favorite-color);
+}
+
+.not-favorite {
+  color: var(--p-text-muted-color);
+}
+
+.actions-header {
+  text-align: end;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+
+.empty {
+  padding-block: 2rem;
+  text-align: center;
+}

@@ -1,3 +1,45 @@
-@for (pokemon of pokemons(); track pokemon.id) {
-  <div>{{ pokemon | json }}</div>
-}
+<header class="page-header">
+  <div>
+    <h1>Pokédex</h1>
+    <p class="subtitle">Manage your Pokémon collection</p>
+  </div>
+  <app-theme-toggle />
+</header>
+
+<main class="page-content">
+  <p-card>
+    <app-pokemon-table
+      [pokemons]="pokemons()"
+      (create)="openCreateDialog()"
+      (edit)="openEditDialog($event)"
+      (remove)="confirmDelete($event)"
+    />
+  </p-card>
+</main>
+
+<app-pokemon-form-dialog
+  [(visible)]="dialogVisible"
+  [pokemon]="editedPokemon()"
+  (save)="savePokemon($event)"
+/>
+
+<p-toast />
+
+<!--
+  The message comes from a template so the user-entered name is rendered as text, not HTML.
+  Accessibility workarounds: ConfirmDialog cannot name its close button (Cancel and Escape remain),
+  and it leaves role="alertdialog" on the inner p-dialog host, which the pass-through removes
+  (the dialog panel itself keeps the role and its header as name).
+-->
+<p-confirmdialog
+  [closable]="false"
+  [pt]="{ host: { role: null } }"
+  (onHide)="confirmFocusReturn.restore()"
+>
+  <ng-template #message let-confirmation>
+    <div class="confirm-message">
+      <i class="pi pi-exclamation-triangle" aria-hidden="true"></i>
+      <p>{{ confirmation.message }}</p>
+    </div>
+  </ng-template>
+</p-confirmdialog>

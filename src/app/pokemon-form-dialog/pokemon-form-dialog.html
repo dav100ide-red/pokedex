@@ -1,0 +1,165 @@
+<p-dialog
+  [header]="header()"
+  [(visible)]="visible"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '42rem' }"
+  [breakpoints]="{ '720px': '95vw' }"
+  closeAriaLabel="Close"
+  (onHide)="focusReturn.restore()"
+>
+  <form class="form" [formGroup]="form">
+    <div class="field field--wide">
+      <label for="pokemon-name">Name</label>
+      <input
+        pInputText
+        id="pokemon-name"
+        formControlName="name"
+        autocomplete="off"
+        maxlength="30"
+        [invalid]="isInvalid(form.controls.name)"
+        fluid
+      />
+      @if (isInvalid(form.controls.name)) {
+        <p-message severity="error" size="small" variant="simple">Enter a name.</p-message>
+      }
+    </div>
+
+    <div class="field">
+      <label for="pokemon-types">Types</label>
+      <p-multiselect
+        inputId="pokemon-types"
+        formControlName="types"
+        [options]="types"
+        placeholder="Select types"
+        display="chip"
+        [showHeader]="false"
+        scrollHeight="30rem"
+        [invalid]="isInvalid(form.controls.types)"
+        appendTo="body"
+        fluid
+      />
+      @if (isInvalid(form.controls.types)) {
+        <p-message severity="error" size="small" variant="simple">
+          Select at least one type.
+        </p-message>
+      }
+    </div>
+
+    <div class="field">
+      <label for="pokemon-level">Level</label>
+      <p-inputnumber
+        inputId="pokemon-level"
+        formControlName="level"
+        [min]="1"
+        [max]="100"
+        [showButtons]="true"
+        [useGrouping]="false"
+        [invalid]="isInvalid(form.controls.level)"
+        fluid
+      />
+      @if (isInvalid(form.controls.level)) {
+        <p-message severity="error" size="small" variant="simple">
+          Enter a level from 1 to 100.
+        </p-message>
+      }
+    </div>
+
+    <div class="field">
+      <label for="pokemon-captured-at">Capture date</label>
+      <p-datepicker
+        inputId="pokemon-captured-at"
+        formControlName="capturedAt"
+        [maxDate]="today()"
+        [showIcon]="true"
+        iconDisplay="input"
+        [showButtonBar]="true"
+        [showOtherMonths]="false"
+        placeholder="mm/dd/yyyy"
+        [invalid]="isInvalid(form.controls.capturedAt)"
+        appendTo="body"
+        fluid
+      >
+        <!-- Future days: announce them as unavailable, as they are only dimmed visually. -->
+        <ng-template #disabledDate let-date>
+          <span aria-disabled="true">{{ date.day }}</span>
+        </ng-template>
+      </p-datepicker>
+      @if (isInvalid(form.controls.capturedAt)) {
+        <p-message severity="error" size="small" variant="simple">
+          Pick the capture date.
+        </p-message>
+      }
+    </div>
+
+    <div class="field">
+      <label for="pokemon-favorite">Favorite</label>
+      <p-toggleswitch inputId="pokemon-favorite" formControlName="favorite" />
+    </div>
+
+    <div class="field field--wide">
+      <label for="pokemon-moves">Moves <span class="optional">(optional)</span></label>
+      <p-autocomplete
+        inputId="pokemon-moves"
+        formControlName="moves"
+        [multiple]="true"
+        [suggestions]="moveSuggestions()"
+        (completeMethod)="searchMoves($event)"
+        [forceSelection]="true"
+        [dropdown]="true"
+        dropdownAriaLabel="Show all moves"
+        [pt]="{ inputMultiple: { 'aria-label': 'Selected moves' } }"
+        placeholder="Type to search moves"
+        appendTo="body"
+        fluid
+      />
+    </div>
+
+    <div class="field field--wide">
+      <span id="pokemon-image-label" class="label">
+        Image <span class="optional">(optional)</span>
+      </span>
+      <div class="image" role="group" aria-labelledby="pokemon-image-label">
+        <app-pokemon-sprite
+          [src]="imageUrl()"
+          [name]="form.controls.name.value.trim() || 'the new Pokémon'"
+          size="96"
+        />
+        <div class="image-actions">
+          <div class="image-buttons">
+            <p-fileupload
+              mode="basic"
+              accept="image/*"
+              [maxFileSize]="maxImageMb * 1024 * 1024"
+              invalidFileSizeMessageSummary="{0} is too large:"
+              invalidFileSizeMessageDetail="the maximum size is {{ maxImageMb }} MB."
+              invalidFileTypeMessageSummary="{0} is not an image:"
+              invalidFileTypeMessageDetail="choose an image file."
+              [auto]="true"
+              [customUpload]="true"
+              [chooseLabel]="imageUrl() ? 'Replace image' : 'Upload image'"
+              chooseIcon="pi pi-upload"
+              (uploadHandler)="onImageUpload($event)"
+            />
+            @if (imageUrl()) {
+              <p-button
+                label="Remove image"
+                icon="pi pi-times"
+                severity="secondary"
+                [text]="true"
+                (onClick)="removeImage()"
+              />
+            }
+          </div>
+          <small class="hint">Any image file up to {{ maxImageMb }} MB.</small>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button label="Cancel" severity="secondary" [text]="true" (onClick)="visible.set(false)" />
+    <p-button label="Save" icon="pi pi-check" (onClick)="submit()" />
+  </ng-template>
+</p-dialog>

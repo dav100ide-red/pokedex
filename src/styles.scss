@@ -1,1 +1,37 @@
-/* You can add global styles to this file, and also import other style files */
+@import 'primeicons/primeicons.css';
+
+:root {
+  color-scheme: light;
+  --app-page-background: var(--p-surface-100);
+  --app-favorite-color: var(--p-amber-600);
+}
+
+:root.app-dark {
+  color-scheme: dark;
+  --app-page-background: var(--p-surface-950);
+  --app-favorite-color: var(--p-amber-400);
+}
+
+body {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    'Segoe UI',
+    Roboto,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
+  background: var(--app-page-background);
+  color: var(--p-text-color);
+}
+
+// Image rendered by PokemonSprite through p-image's imageClass, outside the component's style scope.
+.pokemon-sprite {
+  display: block;
+  object-fit: contain;
+}
+
+.pokemon-sprite--placeholder {
+  image-rendering: pixelated;
+}

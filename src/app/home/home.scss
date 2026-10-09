@@ -1,0 +1,41 @@
+.page-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: var(--p-content-background);
+  border-bottom: 1px solid var(--p-content-border-color);
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+  }
+}
+
+.subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--p-text-muted-color);
+}
+
+.page-content {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.confirm-message {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+
+  i {
+    font-size: 2rem;
+    color: var(--p-orange-500);
+  }
+
+  p {
+    margin: 0;
+  }
+}
