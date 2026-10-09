@@ -1,0 +1,120 @@
+.page-header {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  border-width: 0 0 1px;
+  border-radius: 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-title {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.theme-toggle-icon {
+  font-size: 0.625rem;
+}
+
+.page-content {
+  max-width: 80rem;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.table-caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.type-filter {
+  width: 20rem;
+  max-width: 100%;
+}
+
+.sortable-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pokemon-name {
+  font-weight: 600;
+}
+
+.type-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+// Type badges are tinted with a color of the Aura palette, chosen per type.
+.type-tag {
+  --type-color: var(--p-surface-500);
+  background: color-mix(in srgb, var(--type-color) 18%, transparent);
+  color: color-mix(in srgb, var(--type-color), black 45%);
+
+  :host-context(.app-dark) & {
+    color: color-mix(in srgb, var(--type-color), white 35%);
+  }
+}
+
+$type-colors: (
+  Normal: neutral,
+  Fire: orange,
+  Water: blue,
+  Electric: yellow,
+  Grass: green,
+  Ice: cyan,
+  Fighting: red,
+  Poison: purple,
+  Ground: amber,
+  Flying: sky,
+  Psychic: pink,
+  Bug: lime,
+  Rock: stone,
+  Ghost: violet,
+  Dragon: indigo,
+  Dark: zinc,
+  Steel: slate,
+  Fairy: fuchsia,
+);
+
+@each $type, $color in $type-colors {
+  .type-tag[data-type='#{$type}'] {
+    --type-color: var(--p-#{$color}-500);
+  }
+}
+
+.favorite {
+  color: var(--p-yellow-500);
+}
+
+.not-favorite {
+  color: var(--p-text-muted-color);
+}
+
+.row-actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.empty-message {
+  padding: 2rem;
+  text-align: center;
+  color: var(--p-text-muted-color);
+}

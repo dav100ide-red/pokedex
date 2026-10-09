@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
-import { Home } from './home/home';
 
-export const routes: Routes = [{ path: '', component: Home }];
+export const routes: Routes = [
+  // Lazy loaded: the page pulls in most of the PrimeNG components used by the app.
+  { path: '', loadComponent: () => import('./home/home').then((m) => m.Home) },
+];

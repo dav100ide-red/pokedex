@@ -1,0 +1,147 @@
+<p-dialog
+  [header]="header()"
+  [(visible)]="visible"
+  [modal]="true"
+  [style]="{ width: '36rem' }"
+  [breakpoints]="{ '640px': '95vw' }"
+>
+  <form [formGroup]="form" class="pokemon-form">
+    <div class="field">
+      <label for="pokemon-name">Name</label>
+      <input
+        pInputText
+        id="pokemon-name"
+        formControlName="name"
+        autocomplete="off"
+        autofocus
+        [fluid]="true"
+        [invalid]="isInvalid(form.controls.name)"
+      />
+      @if (isInvalid(form.controls.name)) {
+        <p-message severity="error" size="small" variant="simple">Name is required.</p-message>
+      }
+    </div>
+
+    <div class="field">
+      <label for="pokemon-types">Types</label>
+      <p-multiselect
+        inputId="pokemon-types"
+        formControlName="types"
+        [options]="types"
+        placeholder="Select types"
+        display="chip"
+        [fluid]="true"
+        [invalid]="isInvalid(form.controls.types)"
+      />
+      @if (isInvalid(form.controls.types)) {
+        <p-message severity="error" size="small" variant="simple">
+          Select at least one type.
+        </p-message>
+      }
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="pokemon-level">Level</label>
+        <p-inputnumber
+          inputId="pokemon-level"
+          formControlName="level"
+          [min]="minLevel"
+          [max]="maxLevel"
+          [useGrouping]="false"
+          [showButtons]="true"
+          [fluid]="true"
+          [invalid]="isInvalid(form.controls.level)"
+        />
+        @if (isInvalid(form.controls.level)) {
+          <p-message severity="error" size="small" variant="simple">
+            Level must be between {{ minLevel }} and {{ maxLevel }}.
+          </p-message>
+        }
+      </div>
+
+      <div class="field">
+        <label for="pokemon-captured-at">Capture date</label>
+        <p-datepicker
+          inputId="pokemon-captured-at"
+          formControlName="capturedAt"
+          dateFormat="M d, yy"
+          [maxDate]="today"
+          [showIcon]="true"
+          iconDisplay="input"
+          [showButtonBar]="true"
+          [fluid]="true"
+          [invalid]="isInvalid(form.controls.capturedAt)"
+        />
+        @if (isInvalid(form.controls.capturedAt)) {
+          <p-message severity="error" size="small" variant="simple">
+            Capture date is required.
+          </p-message>
+        }
+      </div>
+    </div>
+
+    <div class="field-inline">
+      <p-toggleswitch inputId="pokemon-favorite" formControlName="favorite" />
+      <label for="pokemon-favorite">Favorite</label>
+    </div>
+
+    <div class="field">
+      <label for="pokemon-moves">Moves</label>
+      <p-autocomplete
+        inputId="pokemon-moves"
+        formControlName="moves"
+        [multiple]="true"
+        [suggestions]="moveSuggestions()"
+        [delay]="0"
+        (completeMethod)="searchMoves($event)"
+        [dropdown]="true"
+        [forceSelection]="true"
+        placeholder="Search moves"
+        [fluid]="true"
+      />
+    </div>
+
+    <div class="field">
+      <span class="field-label">Image</span>
+      <div class="image-field">
+        <p-image
+          [src]="imageUrl() | pokemonImage"
+          [alt]="imageUrl() ? 'Selected image' : 'No image, Poké Ball placeholder'"
+          width="96"
+          height="96"
+          [imageStyle]="{ 'object-fit': 'contain' }"
+        />
+        <div class="image-actions">
+          <div class="image-buttons">
+            <p-fileupload
+              mode="basic"
+              accept="image/*"
+              [maxFileSize]="maxImageSize"
+              [auto]="true"
+              [customUpload]="true"
+              [chooseLabel]="imageUrl() ? 'Replace image' : 'Upload image'"
+              chooseIcon="pi pi-upload"
+              (uploadHandler)="onImageSelected($event)"
+            />
+            @if (imageUrl()) {
+              <p-button
+                label="Remove"
+                icon="pi pi-times"
+                severity="secondary"
+                [text]="true"
+                (onClick)="imageUrl.set('')"
+              />
+            }
+          </div>
+          <small class="hint">Optional. Any image file up to 2 MB.</small>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button label="Cancel" severity="secondary" [text]="true" (onClick)="visible.set(false)" />
+    <p-button label="Save" icon="pi pi-check" (onClick)="save()" />
+  </ng-template>
+</p-dialog>
