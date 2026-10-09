@@ -1,3 +1,154 @@
-@for (pokemon of pokemons(); track pokemon.id) {
-  <div>{{ pokemon | json }}</div>
-}
+<!-- Top center: stacked toasts would otherwise cover "New Pokémon" and the row actions. -->
+<p-toast position="top-center" />
+
+<p-confirmdialog [style]="{ width: '28rem' }" [breakpoints]="{ '575px': '90vw' }">
+  <!-- Rendered as text: the default message is bound with innerHTML and names are user input. -->
+  <ng-template #message let-confirmation>
+    <div class="confirm-message">
+      <i class="pi pi-exclamation-triangle confirm-icon" aria-hidden="true"></i>
+      <p>{{ confirmation.message }}</p>
+    </div>
+  </ng-template>
+</p-confirmdialog>
+
+<p-toolbar class="page-toolbar">
+  <ng-template #start>
+    <div class="brand">
+      <p-image [src]="logoUrl" alt="" width="32" height="32" />
+      <div>
+        <h1 class="brand-title">Pokédex</h1>
+        <p class="brand-subtitle">Manage your captured Pokémon</p>
+      </div>
+    </div>
+  </ng-template>
+  <ng-template #end>
+    <div class="theme-switch">
+      <i class="pi pi-sun" aria-hidden="true"></i>
+      <p-toggleswitch
+        inputId="dark-mode"
+        ariaLabel="Dark mode"
+        [ngModel]="theme.darkMode()"
+        (ngModelChange)="theme.setDarkMode($event)"
+      />
+      <i class="pi pi-moon" aria-hidden="true"></i>
+    </div>
+  </ng-template>
+</p-toolbar>
+
+<main class="page-content">
+  <p-card>
+    <p-table
+      [value]="pokemons()"
+      dataKey="id"
+      [paginator]="true"
+      [rows]="10"
+      [(first)]="first"
+      [showCurrentPageReport]="true"
+      currentPageReportTemplate="{first}–{last} of {totalRecords}"
+      [tableStyle]="{ 'min-width': '52rem' }"
+    >
+      <ng-template #caption>
+        <div class="table-caption">
+          <p-multiselect
+            class="type-filter"
+            [options]="types"
+            [ngModel]="selectedTypes()"
+            (ngModelChange)="selectedTypes.set($event ?? [])"
+            placeholder="Filter by type"
+            ariaLabel="Filter by type"
+            display="chip"
+            [showClear]="true"
+            [showHeader]="false"
+            [maxSelectedLabels]="3"
+            selectedItemsLabel="{0} types"
+          >
+            <ng-template #item let-type>
+              <app-pokemon-type-tag [type]="type" />
+            </ng-template>
+          </p-multiselect>
+          <p-button label="New Pokémon" icon="pi pi-plus" (onClick)="openNew()" />
+        </div>
+      </ng-template>
+
+      <ng-template #header>
+        <tr>
+          <th scope="col" class="sprite-column">Sprite</th>
+          <th scope="col" pSortableColumn="name">
+            <span class="sortable-header">Name <p-sortIcon field="name" /></span>
+          </th>
+          <th scope="col">Types</th>
+          <th scope="col" pSortableColumn="level">
+            <span class="sortable-header">Level <p-sortIcon field="level" /></span>
+          </th>
+          <th scope="col" pSortableColumn="capturedAt">
+            <span class="sortable-header">Capture date <p-sortIcon field="capturedAt" /></span>
+          </th>
+          <th scope="col" class="favorite-column">Favorite</th>
+          <th scope="col" class="actions-column">Actions</th>
+        </tr>
+      </ng-template>
+
+      <ng-template #body let-pokemon>
+        <tr>
+          <td>
+            <app-pokemon-sprite [imageUrl]="pokemon.imageUrl" [name]="pokemon.name" [size]="56" />
+          </td>
+          <td class="name-cell">{{ pokemon.name }}</td>
+          <td>
+            <div class="type-list">
+              @for (type of pokemon.types; track type) {
+                <app-pokemon-type-tag [type]="type" />
+              }
+            </div>
+          </td>
+          <td>{{ pokemon.level }}</td>
+          <!-- Capture dates are calendar days stored at UTC midnight. -->
+          <td>{{ pokemon.capturedAt | date: 'mediumDate' : 'UTC' }}</td>
+          <td class="favorite-column">
+            @if (pokemon.favorite) {
+              <i class="pi pi-star-fill favorite-icon" role="img" aria-label="Favorite"></i>
+            } @else {
+              <i class="pi pi-star not-favorite-icon" role="img" aria-label="Not a favorite"></i>
+            }
+          </td>
+          <td class="actions-column">
+            <p-button
+              icon="pi pi-pencil"
+              severity="secondary"
+              [rounded]="true"
+              [text]="true"
+              [ariaLabel]="'Edit ' + pokemon.name"
+              pTooltip="Edit"
+              tooltipPosition="top"
+              (onClick)="openEdit(pokemon)"
+            />
+            <p-button
+              icon="pi pi-trash"
+              severity="danger"
+              [rounded]="true"
+              [text]="true"
+              [ariaLabel]="'Delete ' + pokemon.name"
+              pTooltip="Delete"
+              tooltipPosition="top"
+              (onClick)="confirmDelete(pokemon)"
+            />
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="7" class="empty-message">
+            @if (selectedTypes().length > 0) {
+              No Pokémon match the selected types.
+            } @else {
+              Your Pokédex is empty: add your first Pokémon!
+            }
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </p-card>
+</main>
+
+<app-pokemon-form-dialog />
