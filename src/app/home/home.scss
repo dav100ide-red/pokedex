@@ -1,0 +1,104 @@
+:host {
+  display: block;
+  max-width: 72rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.app-bar {
+  margin-bottom: 1.5rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+}
+
+.theme-switch {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--p-text-muted-color);
+}
+
+.table-caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.type-filter {
+  width: 20rem;
+  max-width: 100%;
+}
+
+.tags,
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.favorite {
+  color: var(--p-yellow-500);
+}
+
+.not-favorite {
+  color: var(--p-text-muted-color);
+}
+
+.pokemon-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem 1rem;
+}
+
+.field {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  &.half {
+    grid-column: auto;
+  }
+
+  &.inline {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+  }
+}
+
+label,
+.field-label {
+  font-weight: 600;
+}
+
+.image-field {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.image-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+@media (max-width: 640px) {
+  .pokemon-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

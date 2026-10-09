@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
-import { Home } from './home/home';
 
-export const routes: Routes = [{ path: '', component: Home }];
+export const routes: Routes = [
+  // Lazy loaded so the PrimeNG components stay out of the initial bundle budget.
+  { path: '', loadComponent: () => import('./home/home').then((m) => m.Home) },
+];
