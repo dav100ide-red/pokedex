@@ -1,0 +1,162 @@
+<p-dialog
+  [(visible)]="visible"
+  [header]="title()"
+  [modal]="true"
+  [draggable]="false"
+  [style]="{ width: '36rem' }"
+  [breakpoints]="{ '640px': '95vw' }"
+>
+  <!-- A content template (rather than projected content) recreates the fields on every opening. -->
+  <ng-template #content>
+    <form class="pokemon-form" [formGroup]="form">
+      <div class="field">
+        <label for="pokemon-name">Name</label>
+        <input
+          pInputText
+          id="pokemon-name"
+          formControlName="name"
+          autocomplete="off"
+          [fluid]="true"
+          [invalid]="isInvalid(form.controls.name)"
+        />
+        @if (isInvalid(form.controls.name)) {
+          <p-message severity="error" variant="simple" size="small">Name is required.</p-message>
+        }
+      </div>
+
+      <div class="field">
+        <label for="pokemon-types">Types</label>
+        <p-multiselect
+          inputId="pokemon-types"
+          formControlName="types"
+          [options]="types"
+          placeholder="Select one or two types"
+          display="chip"
+          [selectionLimit]="2"
+          [filter]="false"
+          appendTo="body"
+          [fluid]="true"
+          [invalid]="isInvalid(form.controls.types)"
+        />
+        @if (isInvalid(form.controls.types)) {
+          <p-message severity="error" variant="simple" size="small">
+            Select at least one type.
+          </p-message>
+        }
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label for="pokemon-level">Level</label>
+          <p-inputnumber
+            inputId="pokemon-level"
+            formControlName="level"
+            [min]="1"
+            [max]="100"
+            [showButtons]="true"
+            [useGrouping]="false"
+            placeholder="1 – 100"
+            [fluid]="true"
+            [invalid]="isInvalid(form.controls.level)"
+          />
+          @if (isInvalid(form.controls.level)) {
+            <p-message severity="error" variant="simple" size="small">
+              Enter a level between 1 and 100.
+            </p-message>
+          }
+        </div>
+
+        <div class="field">
+          <label for="pokemon-captured-at">Capture date</label>
+          <p-datepicker
+            inputId="pokemon-captured-at"
+            formControlName="capturedAt"
+            dateFormat="M d, yy"
+            placeholder="Select a date"
+            [maxDate]="today()"
+            [showIcon]="true"
+            iconDisplay="input"
+            appendTo="body"
+            [fluid]="true"
+            [invalid]="isInvalid(form.controls.capturedAt)"
+          />
+          @if (isInvalid(form.controls.capturedAt)) {
+            <p-message severity="error" variant="simple" size="small">
+              Capture date is required.
+            </p-message>
+          }
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="pokemon-moves">Moves</label>
+        <p-autocomplete
+          inputId="pokemon-moves"
+          formControlName="moves"
+          [multiple]="true"
+          [dropdown]="true"
+          [suggestions]="moveSuggestions()"
+          (completeMethod)="searchMoves($event)"
+          [autoOptionFocus]="true"
+          placeholder="Search moves"
+          appendTo="body"
+          [fluid]="true"
+        >
+          <ng-template #item let-move>
+            @if (isKnownMove(move)) {
+              {{ move }}
+            } @else {
+              Add “{{ move }}”
+            }
+          </ng-template>
+        </p-autocomplete>
+      </div>
+
+      <div class="switch-field">
+        <p-toggleswitch inputId="pokemon-favorite" formControlName="favorite" />
+        <label for="pokemon-favorite">Favorite</label>
+      </div>
+
+      <div class="field">
+        <span>Image</span>
+        <div class="image-field">
+          <p-image
+            class="image-preview"
+            [src]="imageUrl() || placeholderImage"
+            [alt]="imageUrl() ? 'Pokémon image' : 'No image'"
+            width="96"
+            height="96"
+            [imageStyle]="{ 'object-fit': 'contain' }"
+          />
+          <div class="image-actions">
+            <p-fileupload
+              mode="basic"
+              accept="image/*"
+              [maxFileSize]="maxImageSize"
+              [auto]="true"
+              [customUpload]="true"
+              chooseLabel="Upload image"
+              chooseIcon="pi pi-upload"
+              [chooseButtonProps]="{ severity: 'secondary', outlined: true }"
+              (uploadHandler)="onImageUpload($event)"
+            />
+            @if (imageUrl()) {
+              <p-button
+                label="Remove image"
+                icon="pi pi-times"
+                severity="danger"
+                [text]="true"
+                (onClick)="removeImage()"
+              />
+            }
+          </div>
+        </div>
+      </div>
+    </form>
+  </ng-template>
+
+  <ng-template #footer>
+    <p-button label="Cancel" severity="secondary" [text]="true" (onClick)="visible.set(false)" />
+    <p-button label="Save" icon="pi pi-check" (onClick)="save()" />
+  </ng-template>
+</p-dialog>

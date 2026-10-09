@@ -1,0 +1,69 @@
+.page-header {
+  border-width: 0 0 1px;
+  border-radius: 0;
+}
+
+.brand,
+.theme-toggle,
+.table-caption,
+.row-actions,
+.confirm-message {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.page-content {
+  max-width: 76rem;
+  margin: 0 auto;
+  padding: 1.5rem 1rem;
+}
+
+.table-caption {
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.type-filter {
+  width: 18rem;
+  max-width: 100%;
+}
+
+.pokemon-name {
+  font-weight: 600;
+}
+
+.types {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.favorite {
+  color: var(--p-amber-500);
+}
+
+.not-favorite {
+  color: var(--p-text-muted-color);
+}
+
+.row-actions {
+  gap: 0.25rem;
+}
+
+.empty-message {
+  padding: 2rem;
+  text-align: center;
+  color: var(--p-text-muted-color);
+}
+
+.confirm-message .pi {
+  font-size: 2rem;
+  color: var(--p-orange-500);
+}
