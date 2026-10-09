@@ -1,0 +1,42 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding-top: 0.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+label,
+.label {
+  font-weight: 600;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1.25rem;
+}
+
+.switch-field {
+  flex-direction: row;
+  align-items: center;
+}
+
+.image-field,
+.image-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.preview {
+  padding: 0.5rem;
+  border: 1px dashed var(--p-content-border-color);
+  border-radius: var(--p-content-border-radius);
+}

@@ -1,0 +1,102 @@
+<p-table
+  [value]="rows()"
+  dataKey="id"
+  [rowTrackBy]="trackById"
+  [paginator]="true"
+  [rows]="10"
+  [(first)]="first"
+  [showCurrentPageReport]="true"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} Pokémon"
+  [rowHover]="true"
+  [tableStyle]="{ 'min-width': '56rem' }"
+>
+  <ng-template #caption>
+    <div class="caption">
+      <h2>Collection</h2>
+      <div class="type-filter">
+        <span id="type-filter-label">Filter by type</span>
+        <p-select
+          inputId="type-filter"
+          ariaLabelledBy="type-filter-label"
+          [options]="types"
+          [ngModel]="typeFilter()"
+          (ngModelChange)="filterByType($event)"
+          placeholder="All types"
+          [showClear]="true"
+          scrollHeight="none"
+        />
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #header>
+    <tr>
+      <th scope="col">Sprite</th>
+      <th scope="col" pSortableColumn="name">Name <p-sortIcon field="name" /></th>
+      <th scope="col">Types</th>
+      <th scope="col" pSortableColumn="level">Level <p-sortIcon field="level" /></th>
+      <th scope="col" pSortableColumn="capturedAt">Captured <p-sortIcon field="capturedAt" /></th>
+      <th scope="col">Favorite</th>
+      <th scope="col">Actions</th>
+    </tr>
+  </ng-template>
+
+  <ng-template #body let-pokemon>
+    <tr>
+      <td><app-pokemon-sprite [imageUrl]="pokemon.imageUrl" [name]="pokemon.name" /></td>
+      <td class="name">{{ pokemon.name }}</td>
+      <td>
+        <div class="tags">
+          @for (type of pokemon.types; track type) {
+            <p-tag [value]="type" />
+          }
+        </div>
+      </td>
+      <td>{{ pokemon.level }}</td>
+      <td>{{ pokemon.capturedAt | date: 'mediumDate' }}</td>
+      <td>
+        @if (pokemon.favorite) {
+          <i class="pi pi-star-fill favorite" role="img" aria-label="Favorite"></i>
+        } @else {
+          <i class="pi pi-star not-favorite" role="img" aria-label="Not a favorite"></i>
+        }
+      </td>
+      <td>
+        <div class="actions">
+          <p-button
+            icon="pi pi-pencil"
+            severity="secondary"
+            [rounded]="true"
+            [text]="true"
+            [ariaLabel]="'Edit ' + pokemon.name"
+            pTooltip="Edit"
+            tooltipPosition="top"
+            (onClick)="edit.emit(pokemon)"
+          />
+          <p-button
+            icon="pi pi-trash"
+            severity="danger"
+            [rounded]="true"
+            [text]="true"
+            [ariaLabel]="'Delete ' + pokemon.name"
+            pTooltip="Delete"
+            tooltipPosition="top"
+            (onClick)="remove.emit(pokemon)"
+          />
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template #emptymessage>
+    <tr>
+      <td colspan="7">
+        @if (typeFilter(); as type) {
+          No {{ type }} Pokémon in your collection.
+        } @else {
+          Your Pokédex is empty: add your first Pokémon!
+        }
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

@@ -1,0 +1,45 @@
+.caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+  }
+}
+
+.type-filter {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  p-select {
+    width: 12rem;
+  }
+}
+
+.name {
+  font-weight: 600;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.actions {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.favorite {
+  color: var(--p-amber-600);
+}
+
+.not-favorite {
+  color: var(--p-text-muted-color);
+}

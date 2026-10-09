@@ -1,0 +1,164 @@
+<p-dialog
+  [header]="header()"
+  [(visible)]="visible"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [style]="{ width: '40rem' }"
+  [breakpoints]="{ '640px': '95vw' }"
+  closeAriaLabel="Close"
+  (onHide)="closed.emit()"
+>
+  <form [formGroup]="form" class="form">
+    <div class="field">
+      <label for="pokemon-name">Name</label>
+      <input
+        pInputText
+        id="pokemon-name"
+        formControlName="name"
+        autocomplete="off"
+        maxlength="30"
+        [invalid]="isInvalid(form.controls.name)"
+        [fluid]="true"
+      />
+      @if (isInvalid(form.controls.name)) {
+        <p-message severity="error" size="small" variant="simple">Name is required.</p-message>
+      }
+    </div>
+
+    <div class="field">
+      <label for="pokemon-types">Types</label>
+      <p-multiselect
+        inputId="pokemon-types"
+        formControlName="types"
+        [options]="types"
+        display="chip"
+        placeholder="Select one or two types"
+        [selectionLimit]="maxTypes"
+        [showHeader]="false"
+        scrollHeight="none"
+        [appendTo]="overlayHost"
+        [pt]="typesPt"
+        [invalid]="isInvalid(form.controls.types)"
+        [fluid]="true"
+      />
+      @if (isInvalid(form.controls.types)) {
+        <p-message severity="error" size="small" variant="simple">
+          Select at least one type.
+        </p-message>
+      }
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="pokemon-level">Level</label>
+        <p-inputnumber
+          inputId="pokemon-level"
+          formControlName="level"
+          [min]="1"
+          [max]="100"
+          [showButtons]="true"
+          [useGrouping]="false"
+          placeholder="1 to 100"
+          [invalid]="isInvalid(form.controls.level)"
+          [fluid]="true"
+        />
+        @if (isInvalid(form.controls.level)) {
+          <p-message severity="error" size="small" variant="simple">
+            Level must be between 1 and 100.
+          </p-message>
+        }
+      </div>
+
+      <div class="field">
+        <label for="pokemon-captured-at">Capture date</label>
+        <p-datepicker
+          inputId="pokemon-captured-at"
+          formControlName="capturedAt"
+          [showIcon]="true"
+          [showOtherMonths]="false"
+          placeholder="mm/dd/yyyy"
+          [appendTo]="overlayHost"
+          [invalid]="isInvalid(form.controls.capturedAt)"
+          [fluid]="true"
+        />
+        @if (isInvalid(form.controls.capturedAt)) {
+          <p-message severity="error" size="small" variant="simple">
+            @if (form.controls.capturedAt.hasError('future')) {
+              Capture date cannot be in the future.
+            } @else {
+              Capture date is required.
+            }
+          </p-message>
+        }
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="pokemon-moves">Moves</label>
+      <p-autocomplete
+        inputId="pokemon-moves"
+        formControlName="moves"
+        [multiple]="true"
+        [suggestions]="moveSuggestions()"
+        (completeMethod)="searchMoves($event)"
+        placeholder="Type to search moves"
+        scrollHeight="none"
+        [appendTo]="overlayHost"
+        [pt]="movesPt"
+        [invalid]="isInvalid(form.controls.moves)"
+        [fluid]="true"
+      />
+      @if (isInvalid(form.controls.moves)) {
+        <p-message severity="error" size="small" variant="simple">
+          A Pokémon can know at most {{ maxMoves }} moves.
+        </p-message>
+      }
+    </div>
+
+    <div class="field switch-field">
+      <p-toggleswitch inputId="pokemon-favorite" formControlName="favorite" />
+      <label for="pokemon-favorite">Favorite</label>
+    </div>
+
+    <div class="field">
+      <span id="pokemon-image-label" class="label">Image (optional)</span>
+      <div class="image-field" role="group" aria-labelledby="pokemon-image-label">
+        <app-pokemon-sprite
+          class="preview"
+          [imageUrl]="imageUrl()"
+          [name]="pokemon()?.name ?? 'the new Pokémon'"
+          size="96"
+        />
+        <div class="image-actions">
+          <p-fileupload
+            #uploader
+            mode="basic"
+            accept="image/*"
+            [maxFileSize]="maxImageBytes"
+            [auto]="true"
+            [customUpload]="true"
+            chooseIcon="pi pi-upload"
+            [chooseLabel]="imageUrl() ? 'Replace image' : 'Upload image'"
+            [chooseButtonProps]="{ severity: 'secondary', outlined: true }"
+            (uploadHandler)="readImage($event, uploader)"
+          />
+          @if (imageUrl()) {
+            <p-button
+              label="Remove image"
+              icon="pi pi-times"
+              severity="secondary"
+              [text]="true"
+              (onClick)="removeImage()"
+            />
+          }
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button label="Cancel" severity="secondary" [text]="true" (onClick)="visible.set(false)" />
+    <p-button label="Save" icon="pi pi-check" (onClick)="submit()" />
+  </ng-template>
+</p-dialog>

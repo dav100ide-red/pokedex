@@ -1,3 +1,31 @@
-@for (pokemon of pokemons(); track pokemon.id) {
-  <div>{{ pokemon | json }}</div>
-}
+<header>
+  <p-toolbar ariaLabelledBy="page-title">
+    <ng-template #start>
+      <h1 id="page-title" class="title">Pokédex</h1>
+    </ng-template>
+    <ng-template #end>
+      <div class="toolbar-actions">
+        <app-theme-toggle />
+        <p-button label="New Pokémon" icon="pi pi-plus" (onClick)="openCreate()" />
+      </div>
+    </ng-template>
+  </p-toolbar>
+</header>
+
+<main>
+  <app-pokemon-table
+    [pokemons]="pokemons()"
+    (edit)="openEdit($event)"
+    (remove)="confirmDelete($event)"
+  />
+
+  <app-pokemon-form-dialog
+    [(visible)]="dialogVisible"
+    [pokemon]="editedPokemon()"
+    (save)="savePokemon($event)"
+    (closed)="restoreFocus()"
+  />
+  <p-confirmdialog [pt]="confirmDialogPt" (onHide)="restoreFocus()" />
+  <!-- Top-center: at top-right the toast would cover the "New Pokémon" button. -->
+  <p-toast position="top-center" />
+</main>
